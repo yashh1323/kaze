@@ -6,7 +6,9 @@
 [CmdletBinding()]
 param(
     [string]$Repo = "yashh1323/kaze",
-    [string]$Version = "latest"
+    [string]$Version = $(if ($env:KAZE_VERSION) { $env:KAZE_VERSION } else { "latest" }),
+    [string]$DownloadUrl = $env:KAZE_DOWNLOAD_URL,
+    [string]$ChecksumUrl = $env:KAZE_CHECKSUM_URL
 )
 
 $ErrorActionPreference = "Stop"
@@ -26,9 +28,17 @@ if (-not (Test-Path $installDir)) {
 }
 
 # 2. Determine download URL
-$downloadUrl = "https://github.com/$Repo/releases/latest/download/kaze-windows-amd64.zip"
-if ($Version -ne "latest") {
-    $downloadUrl = "https://github.com/$Repo/releases/download/$Version/kaze-windows-amd64.zip"
+if (-not $DownloadUrl) {
+    $DownloadUrl = "https://github.com/$Repo/releases/latest/download/kaze-windows-amd64.zip"
+    if ($Version -ne "latest") {
+        $DownloadUrl = "https://github.com/$Repo/releases/download/$Version/kaze-windows-amd64.zip"
+    }
+}
+if (-not $ChecksumUrl) {
+    $ChecksumUrl = "https://github.com/$Repo/releases/latest/download/SHA256SUMS"
+    if ($Version -and $Version -ne "latest") {
+        $ChecksumUrl = "https://github.com/$Repo/releases/download/$Version/SHA256SUMS"
+    }
 }
 
 # Check for local fallback if installer is run directly inside repo
@@ -72,7 +82,7 @@ if ($localExe) {
     }
 } else {
     Write-Host "[+] Downloading Kaze from GitHub Releases..." -ForegroundColor Yellow
-    Write-Host "    $downloadUrl" -ForegroundColor DarkGray
+    Write-Host "    $DownloadUrl" -ForegroundColor DarkGray
     
     $tempZip = Join-Path ([System.IO.Path]::GetTempPath()) "kaze-install-$([System.Guid]::NewGuid()).zip"
     $tempExtract = Join-Path ([System.IO.Path]::GetTempPath()) "kaze-extract-$([System.Guid]::NewGuid())"
@@ -80,18 +90,12 @@ if ($localExe) {
     
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $tempZip -UseBasicParsing
-        
-        # Checksum Verification (Fail-Closed)
-        $checksumUrl = "https://github.com/$Repo/releases/latest/download/SHA256SUMS"
-        if ($Version -and $Version -ne "latest") {
-            $checksumUrl = "https://github.com/$Repo/releases/download/$Version/SHA256SUMS"
-        }
+        Invoke-WebRequest -Uri $DownloadUrl -OutFile $tempZip -UseBasicParsing
         
         Write-Host "[*] Verifying cryptographic checksum (SHA256)..." -ForegroundColor Yellow
-        Invoke-WebRequest -Uri $checksumUrl -OutFile $tempSums -UseBasicParsing -TimeoutSec 15
+        Invoke-WebRequest -Uri $ChecksumUrl -OutFile $tempSums -UseBasicParsing -TimeoutSec 15
         if (-not (Test-Path $tempSums)) {
-            throw "Failed to download SHA256SUMS from $checksumUrl"
+            throw "Failed to download SHA256SUMS from $ChecksumUrl"
         }
         $sumsContent = Get-Content -Path $tempSums -Raw
         $actualHash = (Get-FileHash -Path $tempZip -Algorithm SHA256).Hash.ToLower()
