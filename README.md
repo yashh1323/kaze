@@ -172,10 +172,10 @@ Kaze automatically configures mpv with English subtitle matching (`--slang=eng,e
 
 | Flag | Shorthand | Description | Default |
 |:---|:---:|:---|:---:|
-| `--sub` | `-s` | Prefer Japanese audio | `true` |
+| `--sub` | `-s` | Prefer Japanese audio & enable external subtitles in direct CLI playback | `false` (audio defaults to SUB) |
 | `--dub` | `-d` | Prefer English dub (filters out unavailable eps) | `false` |
 | `--quality` | `-q` | Video resolution (`auto`, `1080p`, `720p`, `480p`, `360p`, `2k`, `4k`, `off`) | `auto` |
-| `--upscale` | — | Video enhancer shader (`off`, `retro`, `modern`) | `off` |
+| `--upscale` | — | Video enhancer shader (`off`, `retro`, `modern`; `2k`/`4k` map to `--quality` when `auto`) | `off` |
 | `--episode` | `-e` | Directly play episode number (skips TUI menu) | `0` (TUI mode) |
 | `--start-over` | `-r` | Play episode from 0:00 (ignore saved history bookmark) | `false` |
 | `--trending` | `-t` | Show trending anime from AniList | `false` |
@@ -236,8 +236,8 @@ Kaze automatically configures mpv with English subtitle matching (`--slang=eng,e
 
 Kaze does not host or store any media. It acts purely as a terminal client feeding streams into mpv. The client is hardened against common network vulnerabilities:
 
-- **SSRF Prevention**: All outbound HTTP requests pass through an IP-level validator that blocks loopback addresses (`127.0.0.1`, `localhost`), private RFC1918 subnets, IPv6 link-local addresses, and cloud metadata services (`169.254.169.254`).
-- **Memory Bounds**: All HTTP response readers are wrapped in `io.LimitReader` buffers (capped at 32 MiB) to guard against compression bombs or infinite stream payloads.
+- **SSRF Prevention**: All outbound HTTP requests and MPV remote URLs pass through host and IP validators blocking loopback (`127.0.0.1`, `::1`, `localhost`), RFC1918 private subnets, CGNAT (`100.64.0.0/10`), unspecified/reserved ranges (`0.0.0.0/8`, `240.0.0.0/4`), multicast, IPv6 link-local/ULA/NAT64/zone-IDs, and cloud metadata (`169.254.169.254`), with dial-time DNS IP pinning (`safeDialContext`) to prevent DNS-rebinding TOCTOU.
+- **Memory Bounds**: All HTTP response readers are wrapped in bounded `io.LimitReader` guards (`2 MiB`–`32 MiB` across metadata, tracker, and provider responses; `100 MiB` for checksum-verified release archives) to guard against compression bombs or infinite stream payloads.
 - **No Headless Browsers**: Operates entirely with lightweight Go HTTP parsers. No Puppeteer, Selenium, or unvetted browser instances executing arbitrary JavaScript.
 - **Secure IPC**: MPV communication uses sanitized JSON-RPC over native Windows named pipes (`\\.\pipe\kaze-mpv-*`) and Unix domain sockets, preventing shell command injection.
 - **Distributed Gateways**: Connects across multiple independent gateways with automated failover and zero hardcoded tracking.
@@ -252,8 +252,10 @@ Kaze is designed from the ground up to respect user privacy:
 - **Local-Only Storage**: Your watch history, bookmarks, and AniList OAuth tokens are stored exclusively on your local disk (`~/.kaze/`) and are never sent to third-party tracking services.
 - **Transparent Network Activity**: Outbound network requests occur solely when initiated by your actions:
   - Querying indexers for anime search and stream resolution.
-  - Querying AniSkip for opening and ending chapter timestamps.
+  - Querying AniList GraphQL when browsing `--trending` or when optional progress sync is authenticated via `kaze auth`.
+  - Querying AniSkip for opening, recap, and ending chapter timestamps.
   - Streaming selected video feeds directly inside your local `mpv` player.
+  - Downloading Anime4K GLSL shader assets from GitHub Releases when running `--setup-shaders` or enabling an enhancer/upscaler for the first time.
   - Querying GitHub Releases over HTTPS when checking for updates (`kaze --update`).
 - **No Background Daemons**: Kaze runs exclusively during your active terminal session and terminates completely upon exit.
 

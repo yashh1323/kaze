@@ -7,20 +7,20 @@ class Kaze < Formula
   on_macos do
     if Hardware::CPU.intel?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-darwin-amd64.tar.gz"
-      sha256 "e83228838f212dc9996aca9815c5224ac35ea18a4404e400f4cc618ff09d8a24"
+      sha256 "9f5e314f63d8794b700b31cba17b09fcd259ed5aababe42b08d3a001a168d113"
     elsif Hardware::CPU.arm?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-darwin-arm64.tar.gz"
-      sha256 "76bd3b9302c6db610e987618270bacff96b6859afeac1bc04bc6449a36eaa32d"
+      sha256 "b6613dfffbfca316d903428219d803564009a5725884cfdf8ae7233f66b5d994"
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-linux-amd64.tar.gz"
-      sha256 "f1e6d7fc7d14fb9b76f6c592eaeff542cda038d09d6cc7b1f544a048115da58a"
+      sha256 "892c77fd0b5fc9df140631e0b89579cbe9f28dd3465613a4508d0d7792a82abc"
     elsif Hardware::CPU.arm?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-linux-arm64.tar.gz"
-      sha256 "07b774b3fdc0fbe1c9da3629cf8121f2ba7f8b3259e49f888d811edf80a6661e"
+      sha256 "c9958cdd00b601b262d7630495013e45decd95f4e20a9c9157788c00c3c35915"
     end
   end
 
@@ -28,6 +28,7 @@ class Kaze < Formula
 
   def install
     bin.install "kaze"
+    prefix.install "LICENSE", "THIRD_PARTY_NOTICES.md"
   end
 
   test do

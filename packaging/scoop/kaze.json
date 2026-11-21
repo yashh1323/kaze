@@ -9,7 +9,7 @@
   "architecture": {
     "64bit": {
       "url": "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-windows-amd64.zip",
-      "hash": "72039ff1633af9d45e10ae87f71f7f9a9149b8a4c62e0001e22fa95adc11ee78"
+      "hash": "9e2b88416d7109843fc3fd442af26a4a26d98205b07e4472ddbdd63dbb0cd06e"
     }
   },
   "bin": "kaze.exe",
@@ -17,7 +17,10 @@
   "autoupdate": {
     "architecture": {
       "64bit": {
-        "url": "https://github.com/yashh1323/kaze/releases/download/v$version/kaze-windows-amd64.zip"
+        "url": "https://github.com/yashh1323/kaze/releases/download/v$version/kaze-windows-amd64.zip",
+        "hash": {
+          "url": "$baseurl/SHA256SUMS"
+        }
       }
     }
   }

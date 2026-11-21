@@ -35,6 +35,9 @@ echo ""
 # 3. Resolve Download URLs (with optional env overrides for testing)
 ASSET_NAME="kaze-$OS-$ARCH.tar.gz"
 RELEASE_TAG="${KAZE_VERSION:-latest}"
+case "$RELEASE_TAG" in
+    [0-9]*.[0-9]*.[0-9]*) RELEASE_TAG="v$RELEASE_TAG" ;;
+esac
 
 if [ -n "${KAZE_DOWNLOAD_URL:-}" ]; then
     DOWNLOAD_URL="$KAZE_DOWNLOAD_URL"
@@ -72,10 +75,13 @@ if ! curl -sSL --fail "$CHECKSUM_URL" -o "$TMP_DIR/SHA256SUMS"; then
     exit 1
 fi
 
-# Normalize CRLF line endings to LF
-tr -d '\r' < "$TMP_DIR/SHA256SUMS" > "$TMP_DIR/SHA256SUMS.unix"
-
-if ! grep "[[:space:]]${ASSET_NAME}\$" "$TMP_DIR/SHA256SUMS.unix" > "$TMP_DIR/CHECKSUM_CHECK"; then
+# Normalize CRLF line endings to LF, strip UTF-8 BOM, and match exact asset checksum
+tr -d '\r' < "$TMP_DIR/SHA256SUMS" | awk -v asset="$ASSET_NAME" '
+NR == 1 { sub(/^\357\273\277/, "") }
+NF == 2 && $1 ~ /^[0-9a-fA-F]{64}$/ && ($2 == asset || $2 == "*"asset || $2 == "./"asset) {
+    print tolower($1) "  " asset
+}' > "$TMP_DIR/CHECKSUM_CHECK"
+if [ ! -s "$TMP_DIR/CHECKSUM_CHECK" ]; then
     echo "Error: Asset '$ASSET_NAME' not found in SHA256SUMS manifest. Aborting." >&2
     exit 1
 fi

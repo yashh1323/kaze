@@ -28,6 +28,9 @@ if (-not (Test-Path $installDir)) {
 }
 
 # 2. Determine download URL
+if ($Version -and $Version -ne "latest" -and $Version -match '^\d+\.\d+\.\d+') {
+    $Version = "v$Version"
+}
 if (-not $DownloadUrl) {
     $DownloadUrl = "https://github.com/$Repo/releases/latest/download/kaze-windows-amd64.zip"
     if ($Version -ne "latest") {
@@ -76,8 +79,11 @@ function Install-SafeExecutable($src, $dst) {
 if ($localExe) {
     Write-Host "[+] Installing from local build: $localExe..." -ForegroundColor Yellow
     Install-SafeExecutable $localExe $targetExe
+    $scoopAppExe = Join-Path $env:USERPROFILE "scoop\apps\kaze\current\kaze.exe"
     $scoopShim = Join-Path $env:USERPROFILE "scoop\shims\kaze.exe"
-    if (Test-Path $scoopShim) {
+    if (Test-Path $scoopAppExe) {
+        Install-SafeExecutable $localExe $scoopAppExe
+    } elseif (Test-Path $scoopShim) {
         Install-SafeExecutable $localExe $scoopShim
     }
 } else {
@@ -90,10 +96,13 @@ if ($localExe) {
     
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest -Uri $DownloadUrl -OutFile $tempZip -UseBasicParsing
+        Invoke-WebRequest -Uri $DownloadUrl -OutFile $tempZip -UseBasicParsing -TimeoutSec 120
+        if (-not (Test-Path $tempZip) -or (Get-Item $tempZip).Length -eq 0) {
+            throw "Failed to download release archive from $DownloadUrl"
+        }
         
         Write-Host "[*] Verifying cryptographic checksum (SHA256)..." -ForegroundColor Yellow
-        Invoke-WebRequest -Uri $ChecksumUrl -OutFile $tempSums -UseBasicParsing -TimeoutSec 15
+        Invoke-WebRequest -Uri $ChecksumUrl -OutFile $tempSums -UseBasicParsing -TimeoutSec 30
         if (-not (Test-Path $tempSums)) {
             throw "Failed to download SHA256SUMS from $ChecksumUrl"
         }
@@ -101,7 +110,7 @@ if ($localExe) {
         $actualHash = (Get-FileHash -Path $tempZip -Algorithm SHA256).Hash.ToLower()
         
         # Look for line matching kaze-windows-amd64.zip
-        $match = [regex]::Match($sumsContent, "([a-fA-F0-9]{64})\s+.*kaze-windows-amd64\.zip")
+        $match = [regex]::Match($sumsContent, "(?m)^(?:\xEF\xBB\xBF|\uFEFF)?([a-fA-F0-9]{64})[ \t]+(?:\*|\./)?kaze-windows-amd64\.zip[ \t]*\r?$")
         if (-not $match.Success) {
             throw "Asset 'kaze-windows-amd64.zip' not listed in SHA256SUMS file."
         }
@@ -119,8 +128,11 @@ if ($localExe) {
         }
         
         Install-SafeExecutable $extractedExe.FullName $targetExe
+        $scoopAppExe = Join-Path $env:USERPROFILE "scoop\apps\kaze\current\kaze.exe"
         $scoopShim = Join-Path $env:USERPROFILE "scoop\shims\kaze.exe"
-        if (Test-Path $scoopShim) {
+        if (Test-Path $scoopAppExe) {
+            Install-SafeExecutable $extractedExe.FullName $scoopAppExe
+        } elseif (Test-Path $scoopShim) {
             Install-SafeExecutable $extractedExe.FullName $scoopShim
         }
     } catch {
