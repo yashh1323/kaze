@@ -13,7 +13,7 @@
   <img src="assets/kaze-tui.png" alt="Kaze Interactive Terminal UI" width="900">
 </p>
 
-> **Kaze is 100% free for personal use** — with no fees, no ads, no accounts, and no artificial usage limits.
+> **Kaze is 100% free and open-source under the MIT License** — with no fees, no ads, no accounts, and no artificial usage limits.
 
 ---
 

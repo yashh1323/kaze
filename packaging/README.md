@@ -1,6 +1,6 @@
 # Kaze Packaging Manifests
 
-This directory contains distribution recipes for package managers permitted under Section 3(d) of the Kaze Freeware EULA.
+This directory contains distribution recipes for package managers under the MIT License.
 
 ---
 
