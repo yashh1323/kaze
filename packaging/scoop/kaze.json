@@ -2,14 +2,14 @@
   "version": "4.3.0",
   "description": "Lightweight terminal anime client and media player controller with mpv",
   "homepage": "https://github.com/yashh1323/kaze",
-  "license": "Freeware",
+  "license": "MIT",
   "suggest": {
     "mpv": "mpv"
   },
   "architecture": {
     "64bit": {
       "url": "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-windows-amd64.zip",
-      "hash": "9e2b88416d7109843fc3fd442af26a4a26d98205b07e4472ddbdd63dbb0cd06e"
+      "hash": "f6d93301adaf099ac6c5a089ef1b7d517770de51c6fa14580a55cebf9b33de0d"
     }
   },
   "bin": "kaze.exe",

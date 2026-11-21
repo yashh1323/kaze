@@ -2,25 +2,25 @@ class Kaze < Formula
   desc "Lightweight terminal anime client and media player controller with mpv"
   homepage "https://github.com/yashh1323/kaze"
   version "4.3.0"
-  license "Freeware"
+  license "MIT"
 
   on_macos do
     if Hardware::CPU.intel?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-darwin-amd64.tar.gz"
-      sha256 "9f5e314f63d8794b700b31cba17b09fcd259ed5aababe42b08d3a001a168d113"
+      sha256 "e75a6043f3ffc6f942c4972410b4eed733513ac12da1461040ede804d2925f84"
     elsif Hardware::CPU.arm?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-darwin-arm64.tar.gz"
-      sha256 "b6613dfffbfca316d903428219d803564009a5725884cfdf8ae7233f66b5d994"
+      sha256 "3e00ff48fd392308bc032f23638f1da1b6825238b2f7f985e5b7745994e400c5"
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-linux-amd64.tar.gz"
-      sha256 "892c77fd0b5fc9df140631e0b89579cbe9f28dd3465613a4508d0d7792a82abc"
+      sha256 "55410ea5452a11b5463f3d89e22ece79d617a36c550024bc2bbda535b2f3c32a"
     elsif Hardware::CPU.arm?
       url "https://github.com/yashh1323/kaze/releases/download/v4.3.0/kaze-linux-arm64.tar.gz"
-      sha256 "c9958cdd00b601b262d7630495013e45decd95f4e20a9c9157788c00c3c35915"
+      sha256 "aa753411cf4c94fad70e33e5427f5468e55d6886968ad5a83e2a1dd8a760e781"
     end
   end
 

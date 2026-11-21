@@ -5,7 +5,7 @@
     <a href="https://github.com/yashh1323/kaze/releases/latest"><img src="https://img.shields.io/github/v/release/yashh1323/kaze?style=flat-square&color=00ADD8" alt="Release"></a>
     <a href="https://golang.org"><img src="https://img.shields.io/badge/Go-1.24-00ADD8?style=flat-square&logo=go" alt="Go Version"></a>
     <a href="https://github.com/yashh1323/kaze/stargazers"><img src="https://img.shields.io/github/stars/yashh1323/kaze?style=flat-square&color=FFD700" alt="Stars"></a>
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-Freeware-blue?style=flat-square" alt="License"></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License"></a>
   </p>
 </p>
 
@@ -261,8 +261,8 @@ Kaze is designed from the ground up to respect user privacy:
 
 ---
 
-## License & Commercial Inquiries
+## License
 
-Kaze is distributed under the terms of the [Kaze Freeware License](LICENSE). It is free to download and use for personal purposes with **no fees, no ads, no accounts, and no artificial usage limits**. Third-party open-source libraries and shader files retain their respective MIT and BSD licenses as detailed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Kaze is licensed under the [MIT License](LICENSE). It is free to download and use with **no fees, no ads, no accounts, and no artificial usage limits**. Third-party open-source libraries and shader files retain their respective MIT and BSD-3-Clause licenses as detailed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-**Source Code Acquisition & Enterprise Licensing:** The proprietary Go codebase, concurrent gateway engine, and architecture are available for commercial acquisition, dual-licensing, or enterprise integration. For licensing inquiries, contact: `ggg247043@gmail.com`.
+For commercial, integration, or project inquiries, contact: `ggg247043@gmail.com`.

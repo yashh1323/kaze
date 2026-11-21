@@ -5,16 +5,16 @@ pkgrel=1
 pkgdesc="Lightweight terminal anime client and media player controller with mpv"
 arch=('x86_64' 'aarch64')
 url="https://github.com/yashh1323/kaze"
-license=('custom:Freeware')
+license=('MIT')
 depends=('mpv')
 provides=('kaze')
 conflicts=('kaze')
 
 source_x86_64=("https://github.com/yashh1323/kaze/releases/download/v${pkgver}/kaze-linux-amd64.tar.gz")
-sha256sums_x86_64=('892c77fd0b5fc9df140631e0b89579cbe9f28dd3465613a4508d0d7792a82abc')
+sha256sums_x86_64=('55410ea5452a11b5463f3d89e22ece79d617a36c550024bc2bbda535b2f3c32a')
 
 source_aarch64=("https://github.com/yashh1323/kaze/releases/download/v${pkgver}/kaze-linux-arm64.tar.gz")
-sha256sums_aarch64=('c9958cdd00b601b262d7630495013e45decd95f4e20a9c9157788c00c3c35915')
+sha256sums_aarch64=('aa753411cf4c94fad70e33e5427f5468e55d6886968ad5a83e2a1dd8a760e781')
 
 package() {
     install -Dm755 "${srcdir}/kaze" "${pkgdir}/usr/bin/kaze"
